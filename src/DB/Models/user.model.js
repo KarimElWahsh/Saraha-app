@@ -52,14 +52,19 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    toJSON: true,
-    toObject: true,
+    toJSON: {
+      virtuals: true,
+    },
+    toObject: {
+      virtuals: true,
+    },
   },
 );
 
 userSchema
-  .virtual("username", function (value) {
-    const { firstName, lastName } = value?.split(" ") || [];
+  .virtual("username")
+  .set(function (value) {
+    const [firstName, lastName] = value?.split(" ") || [];
     this.set({ firstName, lastName });
   })
   .get(function () {

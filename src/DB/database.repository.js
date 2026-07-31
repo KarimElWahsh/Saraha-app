@@ -20,15 +20,6 @@ export const create = async ({
   return await model.create(data, options);
 };
 
-export const createOne = async ({
-  model,
-  data,
-  options = { validateBeforeSave: true },
-} = {}) => {
-  const [doc] = (await model.create([data], options)) || [];
-  return doc;
-};
-
 export const findById = async ({
   model,
   id,
