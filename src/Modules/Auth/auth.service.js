@@ -13,6 +13,10 @@ import {
 } from "../../Utils/security/hash.security.js";
 import { HashEnum } from "../../Utils/enums/security.enum.js";
 import { decrypt, encrypt } from "../../Utils/security/encryption.security.js";
+import { getNewLoginCredentials } from "../../Utils/tokens/tokens.js";
+import { OAuth2Client } from "google-auth-library";
+import { GOOGLE_CLIENT_ID } from "../../../config/config.service.js";
+import { ProviderEnum } from "../../Utils/enums/user.enum.js";
 
 export const signup = async (req, res) => {
   const { username, email, password, phone } = req.body;
@@ -56,10 +60,73 @@ export const login = async (req, res) => {
   });
   if (!isPasswordValid) throw BadRequestException("Invalid credentials");
 
-  if (user.phone) user.phone = decrypt(user.phone);
+  const tokens = await getNewLoginCredentials(user);
+
   successResponse({
     res,
     message: "User logged in successfully",
-    data: { user },
+    data: { tokens },
+  });
+};
+
+export const refreshToken = async (req, res) => {
+  const accessToken = await getNewLoginCredentials(req.user, {
+    generateRefreshToken: false,
+  });
+
+  successResponse({
+    res,
+    statusCode: 200,
+    message: "Done",
+    data: { accessToken },
+  });
+};
+
+//Google verify Identity fun
+async function verifyWithGoogle(idToken) {
+  const client = new OAuth2Client();
+
+  const ticket = await client.verifyIdToken({
+    idToken,
+    audience: GOOGLE_CLIENT_ID,
+  });
+  const payload = ticket.getPayload();
+
+  return payload;
+}
+export const loginWithGoogle = async (req, res) => {
+  const { idToken } = req.body;
+  const { email, email_verified, given_name, family_name, picture } =
+    await verifyWithGoogle(idToken);
+  if (!email_verified) throw BadRequestException("Email not verified");
+  const user = await findOne({ model: UserModel, filter: { email } });
+  if (user) {
+    //login
+    const credentials = await getNewLoginCredentials(user);
+    successResponse({
+      res,
+      statusCode: 200,
+      message: "Logged in successfully",
+      data: { credentials },
+    });
+  }
+  const newUser = await create({
+    model: UserModel,
+    data: [
+      {
+        firstName: given_name,
+        lastName: family_name,
+        email,
+        provider: ProviderEnum.GOOGLE,
+        profilePic: picture,
+      },
+    ],
+  });
+  const credentials = await getNewLoginCredentials(newUser);
+  successResponse({
+    res,
+    statusCode: 201,
+    message: "Signup successfully",
+    data: { credentials },
   });
 };
