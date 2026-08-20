@@ -6,12 +6,22 @@ export const GenderEnum = {
 export const RoleEnum = {
   USER: 0,
   ADMIN: 1,
-  SUPER_ADMIN: 2,
-  SUPERVISOR: 3,
-  ADMIN_SUPERVISOR: 4,
+  // SUPER_ADMIN: 2,
+  // SUPERVISOR: 3,
+  // ADMIN_SUPERVISOR: 4,
 };
 
 export const ProviderEnum = {
   SYSTEM: 0,
   GOOGLE: 1,
+};
+
+export const SignatureEnum = {
+  USER: 0,
+  ADMIN: 1,
+};
+
+export const TokenTypeEnum = {
+  Access: 0,
+  Refresh: 1,
 };
