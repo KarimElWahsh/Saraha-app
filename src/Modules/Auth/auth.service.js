@@ -1,4 +1,4 @@
-import { model } from "mongoose";
+import { model, Types } from "mongoose";
 import { create, findOne } from "../../DB/database.repository.js";
 import UserModel from "../../DB/Models/user.model.js";
 import {
@@ -82,7 +82,7 @@ export const refreshToken = async (req, res) => {
   });
 };
 
-//Google verify Identity fun
+//Google verify Identity function
 async function verifyWithGoogle(idToken) {
   const client = new OAuth2Client();
 
