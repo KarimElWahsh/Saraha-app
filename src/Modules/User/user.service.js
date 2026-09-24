@@ -1,7 +1,13 @@
-import { findByIdAndUpdate } from "../../DB/database.repository.js";
+import { findByIdAndUpdate, updateOne } from "../../DB/database.repository.js";
 import UserModel from "../../DB/Models/user.model.js";
+import { HashEnum } from "../../Utils/enums/security.enum.js";
+import { BadRequestException } from "../../Utils/response/error.response.js";
 import { successResponse } from "../../Utils/response/success.response.js";
 import { decrypt } from "../../Utils/security/encryption.security.js";
+import {
+  compareHash,
+  generateHash,
+} from "../../Utils/security/hash.security.js";
 
 export const getProfile = async (req, res) => {
   let { user } = req;
@@ -36,5 +42,31 @@ export const updateCoverImages = async (req, res) => {
     res,
     statusCode: 200,
     data: { user },
+  });
+};
+
+export const updatePassword = async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+
+  const isValidPassword = await compareHash({
+    plainText: oldPassword,
+    cipherText: req.user.password,
+    algorithm: HashEnum.Argon2,
+  });
+  if (!isValidPassword) throw BadRequestException("Invalid password");
+
+  const hashedPassword = await generateHash({
+    plainText: newPassword,
+    algorithm: HashEnum.Argon2,
+  });
+  await updateOne({
+    model: UserModel,
+    filter: { _id: req.user._id },
+    update: { password: hashedPassword },
+  });
+
+  successResponse({
+    res,
+    message: "Password updated successfully",
   });
 };

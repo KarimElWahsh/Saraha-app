@@ -17,11 +17,33 @@ router.post(
   validation(authValidation.loginSchema),
   authService.login,
 );
+
+router.patch(
+  "/confirm-email",
+  validation(authValidation.confirmEmailSchema),
+  authService.confirmEmail,
+);
+router.patch(
+  "/forget-password",
+  validation(authValidation.forgetPasswordSchema),
+  authService.forgetPassword,
+);
+router.patch(
+  "/reset-password",
+  validation(authValidation.resetPasswordSchema),
+  authService.resetPassword,
+);
 router.post(
   "/refresh-token",
   authentication({ tokenType: TokenTypeEnum.Refresh }),
   authService.refreshToken,
 );
 router.post("/social-login", authService.loginWithGoogle);
+
+router.post(
+  "/logout",
+  authentication({ tokenType: TokenTypeEnum.Access }),
+  authService.logout,
+);
 
 export default router;

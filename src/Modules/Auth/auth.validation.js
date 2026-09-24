@@ -4,7 +4,6 @@ import {
   ProviderEnum,
   RoleEnum,
 } from "../../Utils/enums/user.enum.js";
-import { Types } from "mongoose";
 
 export const signupSchema = {
   body: joi.object({
@@ -45,11 +44,43 @@ export const loginSchema = {
     password: joi.string().alphanum().required(),
   }),
 };
-
-/*
-id: joi.string().custom((value, helper) => {
-    return (
-      Types.ObjectId.isValid(value) || helper.message("Invalid objectId format")
-    );
+export const confirmEmailSchema = {
+  body: joi.object({
+    email: joi
+      .string()
+      .email({
+        minDomainSegments: 2,
+        maxDomainSegments: 5,
+        tlds: { allow: ["com", "net", "org"] },
+      })
+      .required(),
+    otp: joi.string().pattern(/^\d{6}$/),
   }),
-*/
+};
+
+export const forgetPasswordSchema = {
+  body: joi.object({
+    email: joi
+      .string()
+      .email({
+        minDomainSegments: 2,
+        maxDomainSegments: 5,
+        tlds: { allow: ["com", "net", "org"] },
+      })
+      .required(),
+  }),
+};
+export const resetPasswordSchema = {
+  body: joi.object({
+    email: joi
+      .string()
+      .email({
+        minDomainSegments: 2,
+        maxDomainSegments: 5,
+        tlds: { allow: ["com", "net", "org"] },
+      })
+      .required(),
+    otp: joi.string().pattern(/^\d{6}$/),
+    newPassword: joi.string().alphanum().required(),
+  }),
+};

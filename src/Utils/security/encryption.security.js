@@ -5,7 +5,6 @@ const IV_LENGTH = 16;
 const ENCRYPTION_SECRET_KEY = Buffer.from(ENC_KEY);
 
 export const encrypt = (text) => {
-  console.log(typeof text);
   const iv = crypto.randomBytes(IV_LENGTH);
 
   const cipher = crypto.createCipheriv(

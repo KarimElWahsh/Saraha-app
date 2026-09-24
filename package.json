@@ -21,6 +21,8 @@
     "joi": "^18.2.8",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.7.4",
-    "multer": "^2.2.0"
+    "multer": "^2.2.0",
+    "nodemailer": "^10.0.8",
+    "uuid": "^14.0.2"
   }
 }
