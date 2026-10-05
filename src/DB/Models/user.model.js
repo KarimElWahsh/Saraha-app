@@ -37,6 +37,9 @@ const userSchema = new mongoose.Schema(
       enum: Object.values(GenderEnum),
       default: GenderEnum.MALE,
     },
+    bio: {
+      type: String,
+    },
     role: {
       type: Number,
       enum: Object.values(RoleEnum),
@@ -53,6 +56,14 @@ const userSchema = new mongoose.Schema(
     profilePic: String,
     coverImages: [String],
     changeCredentialsTime: Date,
+    freezedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    freezedAt: Date,
+    freezedByRole: {
+      type: Number,
+      enum: Object.values(RoleEnum),
+    },
+    restoredBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    restoredAt: Date,
   },
   {
     timestamps: true,

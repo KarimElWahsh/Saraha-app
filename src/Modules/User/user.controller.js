@@ -50,4 +50,28 @@ router.patch(
   userService.updatePassword,
 );
 
+router.patch(
+  "{/:userId}/freeze-account",
+  authentication({ tokenType: TokenTypeEnum.Access }),
+  authorization({ accessRole: [RoleEnum.ADMIN, RoleEnum.USER] }),
+  validation(userValidation.freezeSchema),
+  userService.freezeAccount,
+);
+
+router.patch(
+  "{/:userId}/restore-account",
+  authentication({ tokenType: TokenTypeEnum.Access }),
+  authorization({ accessRole: [RoleEnum.ADMIN, RoleEnum.USER] }),
+  validation(userValidation.restoreSchema),
+  userService.restoreAccount,
+);
+
+router.delete(
+  "/:userId/delete-account",
+  authentication({ tokenType: TokenTypeEnum.Access }),
+  authorization({ accessRole: [RoleEnum.ADMIN] }),
+  validation(userValidation.hardDeleteSchema),
+  userService.hardDelete,
+);
+
 export default router;

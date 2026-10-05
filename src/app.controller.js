@@ -1,5 +1,7 @@
+import helmet from "helmet";
 import { connectDB } from "./DB/connection.js";
 import { authRouter, messageRouter, userRouter } from "./Modules/index.js";
+import { corsOptions } from "./Utils/cors/cors.utils.js";
 import {
   globalErrorHandling,
   NotFoundException,
@@ -7,10 +9,14 @@ import {
 import { successResponse } from "./Utils/response/success.response.js";
 import cors from "cors";
 import path from "node:path";
+import { attachRouterWithLogger } from "./Utils/loggers/morgan.logger.js";
+import morgan from "morgan";
 
 export const bootstrap = async (app, express) => {
-  app.use(express.json(), cors());
+  app.use(express.json(), cors(corsOptions()), helmet(), morgan("dev"));
   await connectDB();
+
+  attachRouterWithLogger(app, "/api/v1/auth", authRouter, "access.log");
   app.use("/uploads", express.static(path.resolve("./src/uploads")));
   app.use("/api/v1/auth", authRouter);
   app.use("/api/v1/message", messageRouter);

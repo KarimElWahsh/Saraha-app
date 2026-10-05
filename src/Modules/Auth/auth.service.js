@@ -109,7 +109,7 @@ export const login = async (req, res) => {
   const isPasswordValid = await compareHash({
     plainText: password,
     cipherText: user.password,
-    algorithm: HashEnum.Argon2,
+    algorithm: HashEnum.Bcrypt,
   });
   if (!isPasswordValid) throw BadRequestException("Invalid credentials");
 
