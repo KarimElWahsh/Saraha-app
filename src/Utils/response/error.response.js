@@ -47,6 +47,12 @@ export const ForbiddenException = (
 ) => {
   return ErrorResponse({ message, status: 403, extra });
 };
+export const TooManyRequestsException = (
+  message = "TooManyRequests",
+  extra = undefined,
+) => {
+  return ErrorResponse({ message, status: 429, extra });
+};
 
 export const globalErrorHandling = (err, req, res, next) => {
   const status = err.status ?? 500;

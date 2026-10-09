@@ -53,8 +53,6 @@ export const localFileUpload = ({
   });
 
   const fileFilter = (req, file, cb) => {
-    console.log("Mimetype:", file.mimetype);
-    console.log("Validation:", validation);
     if (!validation.length || validation.includes(file.mimetype)) {
       return cb(null, true);
     }

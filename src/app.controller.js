@@ -11,10 +11,19 @@ import cors from "cors";
 import path from "node:path";
 import { attachRouterWithLogger } from "./Utils/loggers/morgan.logger.js";
 import morgan from "morgan";
+import { customRateLimiter } from "./Middleware/rate-limit.middleware.js";
+import { redisConnection } from "./DB/redis-connection.js";
 
 export const bootstrap = async (app, express) => {
-  app.use(express.json(), cors(corsOptions()), helmet(), morgan("dev"));
+  app.use(
+    express.json(),
+    cors(corsOptions()),
+    helmet(),
+    morgan("dev"),
+    customRateLimiter(),
+  );
   await connectDB();
+  await redisConnection();
 
   attachRouterWithLogger(app, "/api/v1/auth", authRouter, "access.log");
   app.use("/uploads", express.static(path.resolve("./src/uploads")));

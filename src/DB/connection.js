@@ -9,6 +9,6 @@ export const connectDB = async () => {
     });
     console.log(chalk.green("MongoDB connected Successfully "));
   } catch (error) {
-    console.log(chalk.red("MongoDB connected Failed"));
+    console.log(chalk.red("MongoDB connected Failed"), error);
   }
 };
